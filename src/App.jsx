@@ -1,4 +1,6 @@
 import "./App.css";
+import { FaEyeSlash } from "react-icons/fa";
+import { FaEye } from "react-icons/fa";
 import { useState } from "react";
 // import trash from "./assets/trash3.svg";
 function App() {
@@ -6,6 +8,10 @@ function App() {
   const [age, setAge] = useState(0);
   const [jins, setJins] = useState("Erkak");
   const [desc, setDesc] = useState("");
+  const [email, setEmail] = useState("");
+  const [pass, setPass] = useState("");
+  const [UpdateId, setUpdateId] = useState("");
+  const [isupdate, setIsupdate] = useState(false);
   const [todos, setTodos] = useState(JSON.parse(localStorage.getItem("todos")));
   function getData() {
     let data = [];
@@ -22,6 +28,9 @@ function App() {
       age: age,
       jins: jins,
       desc: desc,
+      email: email,
+      pass: pass,
+      visible: false,
     };
     let old = getData();
     old.push(obj);
@@ -31,6 +40,8 @@ function App() {
     setDesc("");
     setJins("");
     setName("");
+    setEmail("");
+    setPass("");
   }
   function handleDelet(item) {
     let isDelet = confirm("Rostan ham o'chirmoqchimisz?");
@@ -44,7 +55,33 @@ function App() {
       setTodos(copied);
     }
   }
+  function handleShow(order, el) {
+    // console.log(order);
+    let copied = JSON.parse(JSON.stringify(todos));
 
+    copied = copied.map((ell) => {
+      if (ell.id == el.id && order == "show") {
+        el.visible = true;
+      }
+      if (ell.id == el.id && order == "hide") {
+        el.visible = false;
+      }
+      setTodos(copied);
+
+      return ell;
+    });
+  }
+  function handleupdate() {}
+  function handleupdateItem(todos) {
+    setAge(todos.age);
+    setDesc(todos.desc);
+    setJins(todos.jins);
+    setName(todos.name);
+    setEmail(todos.email);
+    setPass(todos.pass);
+    setIsupdate(true);
+    setUpdateId(todos.id);
+  }
   return (
     <>
       <div className="container">
@@ -74,6 +111,29 @@ function App() {
                 required=""
               />
 
+              <label htmlFor="email">Enter email</label>
+              <input
+                type="email"
+                id="email"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                }}
+                name="name"
+                required=""
+              />
+              <label htmlFor="password">Enter password</label>
+              <input
+                type="password"
+                id="password"
+                value={pass}
+                onChange={(e) => {
+                  setPass(e.target.value);
+                }}
+                name="password"
+                required=""
+              />
+
               <select
                 className="jins"
                 value={jins}
@@ -100,13 +160,24 @@ function App() {
                 }}
               ></textarea>
             </div>
-            <button
-              onClick={handleClick}
-              className="form-submit-btn"
-              type="submit"
-            >
-              Submit
-            </button>
+            {!isupdate && (
+              <button
+                onClick={handleClick}
+                className="form-submit-btn"
+                type="submit"
+              >
+                Submit
+              </button>
+            )}
+            {isupdate && (
+              <button
+                onClick={handleupdate}
+                className="form-submit-btn"
+                type="submit"
+              >
+                Update
+              </button>
+            )}
           </form>
         </div>
 
@@ -117,8 +188,11 @@ function App() {
                 <th className="th">№</th>
                 <th>Name</th>
                 <th>Age</th>
+                <th>Email</th>
+                <th>Password</th>
                 <th>Gender</th>
                 <th>Description</th>
+                <th>Edit</th>
                 <th>Delet</th>
               </tr>
             </thead>
@@ -130,9 +204,52 @@ function App() {
                       <td>{i + 1}</td>
                       <td>{el.name}</td>
                       <td>{el.age}</td>
+                      <td>{el.email}</td>
+                      <th
+                        style={{
+                          color: "#717171",
+                          cursor: "pointer",
+                        }}
+                      >
+                        {el.visible ? el.pass : "***"}
+                        {el.visible ? (
+                          <FaEye
+                            style={{ marginLeft: "10px" }}
+                            onClick={() => {
+                              handleShow("hide", el);
+                            }}
+                          />
+                        ) : (
+                          <FaEyeSlash
+                            style={{ marginLeft: "10px" }}
+                            onClick={() => {
+                              handleShow("show", el);
+                            }}
+                          />
+                        )}
+                        {/* <FaEyeSlash />
+                        <FaEye /> */}
+                      </th>
                       <td>{el.jins}</td>
+
                       <td>{el.desc}</td>
-                      <th>
+
+                      <td style={{ cursor: "pointer" }}>
+                        <svg
+                          onClick={() => {
+                            handleupdateItem(todos);
+                          }}
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          fill="currentColor"
+                          class="bi bi-pencil"
+                          viewBox="0 0 16 16"
+                        >
+                          <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325" />
+                        </svg>
+                      </td>
+                      <th style={{ cursor: "pointer" }}>
                         <span
                           onClick={() => {
                             handleDelet(el);
